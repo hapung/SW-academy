@@ -1,0 +1,70 @@
+import java.util.Scanner;
+
+public class Solution {
+    public static void main(String[] args) throws Exception {
+        Scanner sc = new Scanner(System.in);
+        int T = sc.nextInt();
+
+        for (int test_case = 1; test_case <= T; test_case++) {
+            int N = sc.nextInt(); // 재료 개수
+            int L = sc.nextInt(); // 제한 칼로리
+
+            int[] point = new int[N];
+            int[] cal = new int[N];
+
+            for (int i = 0; i < N; i++) {
+                point[i] = sc.nextInt();
+                cal[i] = sc.nextInt();
+            }
+
+            int[][] dp = new int[N + 1][L + 1];
+
+            for (int i = 1; i <= N; i++) {
+                for (int j = 0; j <= L; j++) {
+                    if (j < cal[i - 1]) {
+                        dp[i][j] = dp[i - 1][j];
+                    } else {
+                        dp[i][j] = Math.max(dp[i - 1][j],
+                                            dp[i - 1][j - cal[i - 1]] + point[i - 1]);
+                    }
+                }
+            }
+
+            System.out.printf("#%d %d\n", test_case, dp[N][L]);
+        }
+    }
+}
+
+5215번 문제
+
+내 풀이 : dfs + 백트래킹
+- 배열은 선언만 하고 추후에 지정해야함 
+- compare 함수 사용
+            Arrays.sort(ls, (a,b) -> {
+                int cmp = Float.compare(b.rate, a.rate);
+                if (cmp != 0) return cmp;
+                return Integer.compare(b.cal, a.cal);
+            });
+- 인덱스 기준으로 탈출조건 추가하기 ex) if (i>=N) return;
+
+추천풀이 : dp, 0/1 knapsack 문제
+- dp중 bottom up 구조
+- 핵심구조 
+for (int i = 1; i <= N; i++) { // 각각 재료에 대한 루프
+    for (int j = 0; j <= L; j++) {
+        if (j < cal[i - 1]) { // j는 현재 여유 용량, 지금은 여유 없음
+            dp[i][j] = dp[i - 1][j];
+        } else { // 여유가 생김
+            dp[i][j] = Math.max( // 
+                dp[i - 1][j],
+                dp[i - 1][j - cal[i - 1]] + point[i - 1] // 
+            );
+        }
+    }
+}
+
+매 상황 (i,j) 에서 썻을때와 안썻을때의 경우를 비교 즉, 이전 상태와 비교해서 최선의 경우를 저장
+
+
+
+
