@@ -1,0 +1,117 @@
+import java.util.Scanner;
+
+class Solution {
+    static boolean[][] board;
+    static boolean[][] copyBoard;
+    static int N, cnt;
+    static void checkBoard(int x, int y) {
+        for (int i=0;i<N;i++) {
+            board[x][i] = true;
+        }
+        for (int i=0;i<N;i++) {
+            board[i][y] = true;
+        }
+        for (int i=0;i<N;i++) {
+            int k = x-y;
+            if(i+k < 0 || i+k >=N) continue;
+            board[i+k][i] = true;
+        }
+        for (int i=N-1;i>=0;i--) {
+            int k = x+y;
+            if(-i+k >= N || -i+k <0 ) continue;
+            board[-i+k][i] = true;
+        }
+    }
+
+    static void showBoard() {
+        for(int i=0;i<N;i++) {
+            for(int j=0;j<N;j++) {
+                System.out.printf("%b ", board[j][i]);
+            }
+            System.out.println();
+        }
+        System.out.println("------------");
+    }
+
+    static void dfs(int i, int depth) {
+        showBoard();
+        copyBoard = board.clone();
+        if(!board[i][depth]) checkBoard(i,depth);
+        else return;
+
+        if(depth == N-1) {
+            cnt++;
+            board = copyBoard.clone();
+            return;
+        }
+
+        for(int j=0;j<N;j++) {
+            dfs(j,depth+1);
+        }
+
+    }
+    public static void main(String[] args) throws Exception{
+        Scanner sc = new Scanner(System.in);
+        int T = sc.nextInt();
+
+        for(int test_case = 1;test_case<=T;test_case++) {
+            N = sc.nextInt();
+
+            board = new boolean[N][N];
+
+            cnt = 0;
+
+            for(int i=0;i<N;i++) {
+                board = new boolean[N][N];
+                dfs(i, 0);
+            }
+            System.out.printf("#%d %d\n", test_case, cnt);
+        }
+    }
+}
+내가 짠 코드 : 쓰레기임
+1. 2차원배열에선 .clone 이 얕은복사로 작용 => 1차원 복사를 쓰든지 해야함
+2. checkBoard가 백트래킹을 방해
+3. 2차원 배열을 지속적으로 복사해서 비효율적임
+4. dfs를 여러번 호출할 필요 x
+
+import java.util.Scanner;
+
+class Solution {
+    static int N, cnt;
+    static boolean[] col, diag1, diag2;
+
+    static void dfs(int row) {
+        if (row == N) {
+            cnt++;
+            return;
+        }
+
+        for (int c = 0; c < N; c++) {
+            if (col[c] || diag1[row + c] || diag2[row - c + N - 1]) continue;
+
+            col[c] = diag1[row + c] = diag2[row - c + N - 1] = true;
+            dfs(row + 1);
+            col[c] = diag1[row + c] = diag2[row - c + N - 1] = false;
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+        Scanner sc = new Scanner(System.in);
+        int T = sc.nextInt();
+
+        for (int test_case = 1; test_case <= T; test_case++) {
+            N = sc.nextInt();
+            cnt = 0;
+            col = new boolean[N];
+            diag1 = new boolean[2 * N - 1];
+            diag2 = new boolean[2 * N - 1];
+
+            dfs(0);
+            System.out.printf("#%d %d\n", test_case, cnt);
+        }
+    }
+}
+지피티가 짬
+배열을 1차원으로 변경
+
