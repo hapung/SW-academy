@@ -1,0 +1,49 @@
+import java.util.*;
+
+class Solution {
+    static int c, max;
+    static char[] price;
+
+    static void swap(int i, int j) {
+        char temp = price[i];
+        price[i] = price[j];
+        price[j] = temp;
+    }
+
+    static void rotate(int i, int depth) {
+
+        if (depth == c) {
+            max = Math.max(max, Integer.parseInt(new String(price)));
+            return;
+        }
+
+        for(int j=0;j<price.length ;j++) {
+            if(j==i) continue;
+            swap(i,j);
+            rotate(j, depth+1);
+            swap(i,j);
+        }
+
+    }
+
+    public static void main(String[] args) throws Exception {
+        Scanner sc = new Scanner(System.in);
+        int T = sc.nextInt();
+
+        for(int test_case = 1;test_case<=T;test_case++) {
+            price = sc.next().toCharArray();
+            c = sc.nextInt();
+
+            max = 0;
+
+            rotate(0,0);
+
+            System.out.printf("#%d %d\n", test_case, max);
+        }
+    }
+}
+
+rotate 함수가 문제엿음
+for문에서 모든경우의수를 따지지않음
+->이중반복으로 하는게낫다
+그리고 visited를 항상체크해서 중복방지해줄것
